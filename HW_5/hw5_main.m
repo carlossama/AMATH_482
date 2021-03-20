@@ -91,34 +91,6 @@ end
 
 
 
-
-[U, S, V] = svd(X1, 'econ');
-%%
-r = 378;
-r = min(r, size(U,2));
-U_r = U(:, 1:r); % truncate to rank-r
-S_r = S(1:r, 1:r);
-V_r = V(:, 1:r);
-Atilde = U_r' * X2 * V_r / S_r; % low-rank dynamics
-[W_r, D] = eig(Atilde);
-%%
-Phi = X2 * V_r / S_r * W_r; % DMD modes
-lambda = diag(D); % discrete-time eigenvalues
-omega = log(lambda)/dt; % continuous-time eigenvalues
-%% Compute DMD mode amplitudes b
-x1 = X1(:, 1);
-b = Phi\x1;
-%% DMD reconstruction
-mm1 = size(X1, 2); % mm1 = m - 1
-time_dynamics = zeros(r, mm1);
-t = (0:mm1-1)*dt; % time vector
-for iter = 1:mm1
-time_dynamics(:,iter)=(b.*exp(omega*t(iter)));
-end
-Xdmd = Phi * time_dynamics;
-
-%% 
-% 
 % background = zeros(size(Phi));
 % backgroundIdx = find(abs(w) < 1);
 % background(:,backgroundIdx) = u_dmd(:,backgroundIdx);
